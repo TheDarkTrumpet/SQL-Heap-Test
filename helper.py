@@ -97,9 +97,11 @@ def TimeInstance(func):
     return duration
 
 
-def CreateEngine(server, database="TempDB"):
+def CreateEngine(server, database="TempDB", autocommit=False):
     """ Returns a SQLAlchemy object with a connection to our database, using kerberos/trusted connection """
-    return sa.create_engine(
-        f"mssql+pyodbc://{server}/{database}?driver=ODBC+Driver+18+for+SQL+Server&Trusted_Connection=yes&TrustServerCertificate=Yes",
-        connect_args={'autocommit': True})
+    connString = f"mssql+pyodbc://{server}/{database}?driver=ODBC+Driver+18+for+SQL+Server&Trusted_Connection=yes&TrustServerCertificate=Yes"
+    if autocommit:
+        return sa.create_engine(connString, connect_args={'autocommit': True})
+    else:
+        return sa.create_engine(connString)
 
