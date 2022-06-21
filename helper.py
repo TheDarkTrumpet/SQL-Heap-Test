@@ -50,7 +50,7 @@ def generateRecords(maxRecords: int):
     return pdToInsert
 
 
-def executeScript(eng: sa.engine.Engine, file: str):
+def ExecuteScript(eng: sa.engine.Engine, file: str):
     with eng.connect() as con:
         with open(file) as sql_file:
             sql_command = ''
@@ -74,17 +74,23 @@ def executeScript(eng: sa.engine.Engine, file: str):
                             sql_command = ''
 
 
-def addRecords(maxRecords: int, connection: sa.engine.Connection):
+def AddRecords(maxRecords: int, connection: sa.engine.Connection):
     pdToInsert = generateRecords(maxRecords)
     pdToInsert.to_sql("testTable", con=connection, if_exists='append', chunksize=1000, index=False)
     print(f"Number of records attempted to be inserted: {maxRecords}")
 
 
-def timeInstance(func):
+def TimeInstance(func):
     tic = time.perf_counter()
     func()
     toc = time.perf_counter()
     duration = f"{toc-tic:0.4f}"
     print(f"Completed in {duration} seconds")
     return duration
+
+
+def CreateEngine(server, database = "TempDB"):
+    return sa.create_engine(
+        f"mssql+pyodbc://{server}/{database}?driver=ODBC+Driver+18+for+SQL+Server&Trusted_Connection=yes&TrustServerCertificate=Yes",
+        connect_args={'autocommit': True})
 
