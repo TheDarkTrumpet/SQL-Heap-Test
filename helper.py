@@ -14,6 +14,9 @@ gen = DocumentGenerator()
 
 
 def generateChunk(arg):
+    """ Given a tuple for the max records to generate, and max range for upper integer, will generate fixture information
+    (present in toInsert), and in the end convert to a Pandas DataFrame and return to generateRecords for combination
+    with other work done. """
     maxRecords, maxInt = arg
     toInsert = {
         "intColumn": [],
@@ -38,6 +41,8 @@ def generateChunk(arg):
 
 
 def generateRecords(maxRecords: int):
+    """ Will create a pool of 8, and will call generateChunk parallel.  Returns a Pandas dataframe of concatenated
+    results. """
     numProcesses = 8
     maxInt = maxRecords * 200
 
@@ -51,6 +56,7 @@ def generateRecords(maxRecords: int):
 
 
 def ExecuteScript(eng: sa.engine.Engine, file: str):
+    """ Given a SQL script file, with statements ending in ';', will read and execute multiple statements. """
     with eng.connect() as con:
         with open(file) as sql_file:
             sql_command = ''
@@ -75,12 +81,14 @@ def ExecuteScript(eng: sa.engine.Engine, file: str):
 
 
 def AddRecords(maxRecords: int, connection: sa.engine.Connection):
+    """ Generates fixture records up to (but likely not to) the maxRecords, into our 'testTable'. """
     pdToInsert = generateRecords(maxRecords)
     pdToInsert.to_sql("testTable", con=connection, if_exists='append', chunksize=1000, index=False)
     print(f"Number of records attempted to be inserted: {maxRecords}")
 
 
 def TimeInstance(func):
+    """ Runs the function, func, and returns a time of completion in seconds. """
     tic = time.perf_counter()
     func()
     toc = time.perf_counter()
@@ -89,7 +97,8 @@ def TimeInstance(func):
     return duration
 
 
-def CreateEngine(server, database = "TempDB"):
+def CreateEngine(server, database="TempDB"):
+    """ Returns a SQLAlchemy object with a connection to our database, using kerberos/trusted connection """
     return sa.create_engine(
         f"mssql+pyodbc://{server}/{database}?driver=ODBC+Driver+18+for+SQL+Server&Trusted_Connection=yes&TrustServerCertificate=Yes",
         connect_args={'autocommit': True})
