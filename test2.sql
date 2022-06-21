@@ -1,0 +1,1 @@
+drop index IX_testTable ON dbo.testTable;
