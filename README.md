@@ -11,6 +11,7 @@ Everything's in the root folder, as this is more for analysis than a dedicated p
 
 * `runTests.ipynb` - This is a Jupyter notebook that can be run to generate the `results_400000.pkl` and `results_1500000.pkl` files.
   * These also include the test cases, assumptions, and so on. 
+  * `avg_sample.py` - This also exists to generate a more statistically-valid result set.  Runs the tests multiple times and collects the metrics
 * `results.ipynb` - This is a Jupyter notebook for the results of the tests, graphs, and outcomes.
 
 ## Assumptions and General Problem Statement/Hardware
